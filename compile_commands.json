@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/petar/Projects/cpplox/build/src",
+  "command": "/usr/bin/c++   -std=gnu++17 -o CMakeFiles/cpplox.dir/main.cpp.o -c /home/petar/Projects/cpplox/src/main.cpp",
+  "file": "/home/petar/Projects/cpplox/src/main.cpp"
+}
+]
