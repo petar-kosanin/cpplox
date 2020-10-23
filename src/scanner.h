@@ -64,8 +64,6 @@ private:
                 break;
             case '\n':
                 ++line;
-                // #TODO ne prepoznaje new lines ???
-                std::cout << "Nasao sam new line " << line;
                 break;
             // ignore whitespaces
             case ' ':
@@ -82,10 +80,60 @@ private:
                 } else
                     addToken( TokenType::SLASH );
                 break;
+            case '"':
+                matchString();
+                break;
             default: 
-                Lox& instance = Lox::instance();
-                instance.error(line, "Unrecognized character");
+                if ( isDigit( c ) )
+                {
+                    number();
+                } else 
+                {
+                    loxInstance.error(line, "Unrecognized character");
+                }
         }
+    }
+
+    bool isDigit(char c) const
+    {
+        return c >= '0' && c <= '9';
+    }
+
+    void number()
+    {
+        while ( isDigit( peek() ) && !isAtEnd() ) advance();
+
+        if ( peek() == '.' && isDigit( peekNext() ) ) 
+            advance();
+
+        while ( isDigit( peek() ) && !isAtEnd() ) advance();
+
+        double value = std::stod( source.substr( start, current - start ) );
+        Literal literal{value};
+        addToken(TokenType::NUMBER, literal);
+    }
+
+    char peekNext() const
+    {
+        if ( current + 1 >= source.length() ) return '\0';
+        return source.at( current + 1 );
+    }
+
+    void matchString()
+    {
+        while ( peek() != '"' && !isAtEnd() )
+        {
+            if ( source.at( current ) == '\n' ) ++line;
+            advance();
+        }
+
+        if ( isAtEnd() )
+            loxInstance.error(line, "Unterminated string");
+
+        advance();
+        std::string lexeme = source.substr( start + 1, current - start - 2);
+        Literal l{lexeme};
+        addToken(TokenType::STRING, l);
     }
 
     // lookahead - returns current unconsumed character
@@ -133,10 +181,11 @@ private:
 private:
     const std::string source;
     std::vector<Token> tokens = std::vector<Token>();
+    Lox& loxInstance = Lox::instance();
 
-    int start = 0;
-    int current = 0;
-    int line = 0;
+    unsigned int start = 0;
+    unsigned int current = 0;
+    unsigned int line = 0;
 
 };
 

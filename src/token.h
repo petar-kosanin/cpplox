@@ -15,7 +15,7 @@ struct Token
     Token(TokenType type, 
             const std::string& lexeme, 
             std::optional<Literal> literal,
-            int line)
+            unsigned int line)
         : type(type)
         , lexeme(lexeme)
         , literal(literal)
@@ -25,7 +25,7 @@ struct Token
     TokenType type;
     std::string lexeme;
     std::optional<Literal> literal;
-    int line;
+    unsigned int line;
 };
 
 

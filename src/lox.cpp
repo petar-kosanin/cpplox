@@ -44,7 +44,9 @@ std::string Lox::readFile(const std::string& path)
     std::string data;
     std::string buffer;
     while ( std::getline(file, buffer) )
-        data.append( buffer );
+        // reappend new line
+        // need a better way to read from file #TODO
+        data.append( buffer + "\n" );
 
     return data;
 }
@@ -60,7 +62,7 @@ void Lox::report(
         const std::string& where, 
         const std::string& message)
 {
-    std::cerr   << "[line " 
+    std::cerr   << "[line "  << line
                 << "] Error " 
                 << where << " " 
                 << message << "\n";

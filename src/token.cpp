@@ -14,8 +14,8 @@ std::ostream& operator<<(std::ostream& out, const Token& token)
                 // value is variant, member variable of Literal
                 token.literal.value().value);
     else
-        out << "null ";
-    out << "Line: " << token.line;
+        out << "null";
+    out << " Line: " << token.line;
     out << "}\n";
 
     return out;
