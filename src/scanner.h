@@ -3,10 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 
 #include "token.h"
 #include "lox.h"
+
 
 
 class Scanner
@@ -87,11 +89,43 @@ private:
                 if ( isDigit( c ) )
                 {
                     number();
-                } else 
+                } else if ( isAlpha( c ) )
+                {
+                    while ( isAlphaNumeric(peek()) && !isAtEnd() ) advance();
+
+                    std::string word = source.substr( start, current - start );
+                    if ( isKeyword( word ) )
+                        addToken( keywordType( word ) );
+                    else
+                        addToken(TokenType::IDENTIFIER);
+
+                } else
                 {
                     loxInstance.error(line, "Unrecognized character");
                 }
         }
+    }
+
+    bool isKeyword(const std::string& word) const
+    {
+        return keywords.find( word ) != keywords.end();
+    }
+
+    TokenType keywordType(const std::string& word) const
+    {
+        return keywords.at( word );
+    }
+
+    bool isAlphaNumeric(char c) const 
+    {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    bool isAlpha(char c) const
+    {
+        return  (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                (c == '_');
     }
 
     bool isDigit(char c) const
@@ -186,6 +220,27 @@ private:
     unsigned int start = 0;
     unsigned int current = 0;
     unsigned int line = 0;
+
+    std::map<std::string, TokenType> keywords
+    {
+        {"and",    TokenType::AND},
+        {"class",  TokenType::CLASS},
+        {"else",   TokenType::ELSE},
+        {"false",  TokenType::FALSE},
+        {"for",    TokenType::FOR},
+        {"fun",    TokenType::FUN},
+        {"if",     TokenType::IF},
+        {"nil",    TokenType::NIL},
+        {"or",     TokenType::OR},
+        {"print",  TokenType::PRINT},
+        {"return", TokenType::RETURN},
+        {"super",  TokenType::SUPER},
+        {"this",   TokenType::THIS},
+        {"true",   TokenType::TRUE},
+        {"var",    TokenType::VAR},
+        {"while",  TokenType::WHILE},
+    };
+    
 
 };
 
